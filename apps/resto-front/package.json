@@ -2,7 +2,10 @@
 	"name": "resto-front",
 	"type": "module",
 	"scripts": {
-		"dev": "bun run --port 3003 --watch src/index.ts"
+		"dev": "vite --port 3000",
+		"build": "vite build && tsc",
+		"preview": "vite preview",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@fontsource-variable/inter": "^5.2.8",
