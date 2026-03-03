@@ -1,4 +1,4 @@
-# Resto Monitor — Design Document
+# Resto Monitor Design Document
 
 ## Overview
  
@@ -60,7 +60,7 @@ A key scheduling decision is storing a **pre-computed next execution timestamp**
 WHERE scrape_status = 'SCHEDULED' AND next_run_time <= NOW()
 ```
 
-The alternative — evaluating cron schedule expressions against every row on every poll cycle — does not scale: with millions of rows it becomes a full table scan on CPU-bound expression evaluation per row. The pre-computation pattern is used for exactly this reason.
+The alternative, evaluating cron schedule expressions against every row on every poll cycle, does not scale: with millions of rows it becomes a full table scan on CPU-bound expression evaluation per row. The pre-computation pattern is used for exactly this reason.
 
 ---
 
@@ -68,11 +68,11 @@ The alternative — evaluating cron schedule expressions against every row on ev
 
 ### The Problem
 
-The fundamental challenge of distributed scheduling is not the scheduling logic itself — it is achieving **exactly-once execution** when multiple workers independently detect the same due jobs. Without coordination, all workers simultaneously claim the same row, scraping the same restaurant multiple times. We need mutual exclusion without a centralised lock manager.
-
+The fundamental challenge of distributed scheduling is not the scheduling logic itself but in achieving **exactly-once execution** when multiple workers independently detect the same due jobs. Without coordination, all workers simultaneously claim the same row, scraping the same restaurant multiple times. We need mutual exclusion without a centralised lock manager.
+ 
 ### Solution: Optimistic DB-Backed Claim with `FOR UPDATE SKIP LOCKED`
 
-Work is divided into **three clearly separated phases**, each with different transactional scope. Critically, **job execution (Phase 2) is fully decoupled from the claim transaction (Phase 1)** — a blocking scrape cannot block other workers from claiming their batches.
+Work is divided into **three clearly separated phases**, each with different transactional scope. Critically, **job execution (Phase 2) is fully decoupled from the claim transaction (Phase 1)** a blocking scrape cannot block other workers from claiming their batches.
 
 ```mermaid
 sequenceDiagram
@@ -80,24 +80,24 @@ sequenceDiagram
     participant W2 as Worker 2
     participant PG as PostgreSQL
 
-    Note over W1,PG: Phase 1 — Claim (short transaction)
+    Note over W1,PG: Phase 1: Claim (short transaction)
     W1->>PG: BEGIN
     W1->>PG: SELECT … WHERE status='SCHEDULED' AND next_run_time <= now()<br/>ORDER BY next_run_time ASC LIMIT 10<br/>FOR UPDATE SKIP LOCKED
     PG-->>W1: rows [A, B, C …]
     W2->>PG: BEGIN
     W2->>PG: SELECT … FOR UPDATE SKIP LOCKED
-    Note over PG: rows held by W1 are skipped instantly — no blocking
+    Note over PG: rows held by W1 are skipped instantly without blocking
     PG-->>W2: rows [K, L, M …]  (different set)
     W1->>PG: UPDATE status='RUNNING' WHERE id IN (A,B,C)
     W1->>PG: COMMIT  ← lock released after status flip
     W2->>PG: UPDATE status='RUNNING' WHERE id IN (K,L,M)
     W2->>PG: COMMIT
 
-    Note over W1,PG: Phase 2 — Process (outside transaction, non-blocking)
+    Note over W1,PG: Phase 2: Process (outside transaction, non-blocking)
     W1->>Zomato: HTTP GET /webroutes/getPage?page_url=…  (parallel, 10 at once)
     Zomato-->>W1: JSON payload
 
-    Note over W1,PG: Phase 3 — Write-back (single UPDATE, no transaction)
+    Note over W1,PG: Phase 3: Write-back (single UPDATE, no transaction)
     W1->>PG: UPDATE status='SCHEDULED', next_run_time=now()+5min, is_open_now=…
     Note over W1,PG: On error: UPDATE status='SCHEDULED', next_run_time=now()
 ```
@@ -106,8 +106,8 @@ sequenceDiagram
 
 `SELECT … FOR UPDATE` acquires a row-level exclusive lock. The critical addition is `SKIP LOCKED`: instead of blocking or throwing a serialisation error, competing workers **silently skip any row already locked by another session**. This gives us:
 
-1. **No external coordinator** — PostgreSQL's lock table is the only source of truth during the claim window.
-2. **Short critical section** — the transaction commits after the `UPDATE status='RUNNING'`, so the exclusive lock is held for only two SQL statements.
+1. **No external coordinator**: PostgreSQL's lock table is the only source of truth during the claim window.
+2. **Short critical section**: the transaction commits after the `UPDATE status='RUNNING'`, so the exclusive lock is held for only two SQL statements.
 
 After the claim transaction commits, `status = 'RUNNING'` acts as a persistent guard: even if a new worker polls immediately, it filters on `status = 'SCHEDULED'`, so the in-flight row is invisible to all future claim attempts.
 
@@ -117,17 +117,17 @@ The guarantee is **utmost-once** (not exactly-once in the strict sense), with be
 
 - **Happy path**: on successful scrape the row is reset to `SCHEDULED` with `next_run_time = now() + 5 min`.
 - **Error path**: the row is reset to `SCHEDULED` with `next_run_time = now()`, making it immediately eligible for re-claim. There is no exponential back-off (see Gaps).
-- **Worker crash**: if the process dies between claim and write-back the row is **stuck in `RUNNING` forever** — this is a gap in the POC.
+- **Worker crash**: if the process dies between claim and write-back the row is **stuck in `RUNNING` forever**. This is a gap in the POC.
 
 Because the write-back is an idempotent `UPDATE` keyed on `res_id`, replaying it is safe.
 
 ### Missed Job Policy
 
-The current error path sets `next_run_time = now()` — equivalent to the "fire immediately on recovery" strategy.
+The current error path sets `next_run_time = now()` equivalent to the "fire immediately on recovery".
 
 ---
 
-## Scheduler Architecture Patterns — Context
+## Scheduler Architecture Patterns
 
 Three patterns exist for distributed job scheduling, with clear applicability criteria:
 
@@ -165,7 +165,7 @@ graph LR
 - Missed-job policies (fire-once, skip, age-limit) are configurable per job type.
 
 **Why we chose the DB-backed approach instead:**
-- Zero additional infrastructure — no Redis or message broker to provision.
+- Zero additional infrastructure; no Redis or message broker to provision.
 - The restaurant table *is* the job queue; no sync between two stores.
 - For the current scale (tens to low hundreds of restaurants) the polling overhead is negligible.
 - Simpler operational model for a small monorepo.
@@ -176,9 +176,9 @@ The DB-backed approach becomes increasingly painful as volume grows, primarily d
  
 ## Known Gaps
 
-- worker crash leaves rows stuck forever
-- no `SIGTERM` handler; mid-batch kill leaves rows in `RUNNING`.
-- error path sets `next_run_time = now()`, flooding the DB during a Zomato outage.
+- Worker crash leaves rows stuck forever
+- No `SIGTERM` handler; mid-batch kill leaves rows in `RUNNING`.
+- Error path sets `next_run_time = now()`, flooding the DB during a Zomato outage.
 - 10 concurrent fetches per worker; multiple replicas risk IP blocks via unknown rate limiting.
 - DB indexing not evaluated
 - Observability and alerting not implemented
