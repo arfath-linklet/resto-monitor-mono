@@ -1,0 +1,18 @@
+{
+  "name": "resto-monitor-mono",
+  "private": true,
+  "scripts": {
+    "dev": "bunx concurrently \"bun --cwd apps/resto-api dev\" \"bun --cwd apps/resto-scrape-worker dev\" \"bun --cwd apps/resto-front dev\"",
+    "format": "bunx biome format --write",
+    "lint": "bunx biome lint --write",
+    "format-lint": "bunx biome check --write"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "2.3.2",
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "resto-front",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --port 3003 --watch src/index.ts"
+  }
+}

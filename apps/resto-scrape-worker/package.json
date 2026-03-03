@@ -1,0 +1,7 @@
+{
+  "name": "resto-scrape-worker",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --port 3002 --watch src/index.ts"
+  }
+}
