@@ -1,6 +1,9 @@
+CREATE SCHEMA "app";
+--> statement-breakpoint
 CREATE TABLE "app"."restaurant_availabilities" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"res_id" text NOT NULL,
+	"res_url" text NOT NULL,
 	"res_status_text" text,
 	"name" text NOT NULL,
 	"is_open_now" boolean NOT NULL,
@@ -8,13 +11,14 @@ CREATE TABLE "app"."restaurant_availabilities" (
 	"is_temp_closed" boolean NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "restaurant_availabilities_res_id_unique" UNIQUE("res_id")
+	CONSTRAINT "restaurant_availabilities_res_id_unique" UNIQUE("res_id"),
+	CONSTRAINT "restaurant_availabilities_res_url_unique" UNIQUE("res_url")
 );
 --> statement-breakpoint
 CREATE TABLE "app"."restaurant_timings" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"res_id" text NOT NULL,
-	"day_of_week" text NOT NULL,
+	"day_of_week" integer NOT NULL,
 	"opens_at" time NOT NULL,
 	"closes_at" time NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,

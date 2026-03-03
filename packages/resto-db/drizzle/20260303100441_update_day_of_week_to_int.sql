@@ -1,1 +1,0 @@
-ALTER TABLE "app"."restaurant_timings" ALTER COLUMN "day_of_week" SET DATA TYPE integer;
