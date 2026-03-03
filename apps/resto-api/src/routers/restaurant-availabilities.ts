@@ -10,7 +10,7 @@ const columnMap = {
 	isPermClosed: restaurantAvailabilities.isPermClosed,
 	isTempClosed: restaurantAvailabilities.isTempClosed,
 	expectedOpen: restaurantAvailabilities.expectedOpen,
-	lastCheckedAt: restaurantAvailabilities.lastCheckedAt,
+	nextRunTime: restaurantAvailabilities.nextRunTime,
 };
 
 export const restaurantAvailabilitiesRouter = {
@@ -26,7 +26,7 @@ export const restaurantAvailabilitiesRouter = {
 					"isPermClosed",
 					"isTempClosed",
 					"expectedOpen",
-					"lastCheckedAt",
+					"nextRunTime",
 				]),
 				sortOrder: v.picklist(["asc", "desc"]),
 				filterBy: v.optional(
