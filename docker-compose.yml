@@ -1,6 +1,6 @@
 services:
   app-db:
-    image: "postgres:18-trixie"
+    image: "postgres:17-trixie"
     container_name: resto-monitor-db
     environment:
       # superuser
