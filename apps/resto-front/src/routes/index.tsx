@@ -30,6 +30,8 @@ const querySchema = v.object({
 				"isOpenNow",
 				"isPermClosed",
 				"isTempClosed",
+				"expectedOpen",
+				"nextRunTime",
 			]),
 			"createdAt",
 		),

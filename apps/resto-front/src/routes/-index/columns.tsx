@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { ExternalLinkIcon } from "lucide-react";
+import { AlertTriangleIcon, ExternalLinkIcon } from "lucide-react";
 import type { AppRouter, InferRouterOutputs } from "resto-api";
 import { Badge } from "@/components/ui/badge";
 
@@ -47,6 +47,51 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 				<Badge variant={row.original.isOpenNow ? "default" : "secondary"}>
 					{row.original.isOpenNow ? "Open" : "Closed"}
 				</Badge>
+			);
+		},
+	},
+	{
+		accessorKey: "expectedOpen",
+		header: "Expected",
+		cell: ({ row }) => {
+			const expected = row.original.expectedOpen;
+			const actual = row.original.isOpenNow;
+			const hasMismatch =
+				expected !== actual ||
+				row.original.isPermClosed ||
+				row.original.isTempClosed;
+
+			return (
+				<div className="inline-flex items-center gap-1.5">
+					<Badge variant={expected ? "default" : "secondary"}>
+						{expected ? "Open" : "Closed"}
+					</Badge>
+					{hasMismatch && (
+						<AlertTriangleIcon className="size-4 text-amber-500" />
+					)}
+				</div>
+			);
+		},
+	},
+	{
+		accessorKey: "nextRunTime",
+		header: "Next Scrape",
+		cell: ({ getValue }) => {
+			const date = new Date(getValue<string>());
+			const now = new Date();
+			const diffMs = date.getTime() - now.getTime();
+
+			if (diffMs <= 0) {
+				return <span className="text-muted-foreground text-sm">Pending</span>;
+			}
+
+			const diffMin = Math.ceil(diffMs / 60_000);
+			return (
+				<span className="text-muted-foreground text-sm">
+					{diffMin < 60
+						? `${diffMin}m`
+						: `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`}
+				</span>
 			);
 		},
 	},

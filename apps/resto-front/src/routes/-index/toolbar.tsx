@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
 	Select,
 	SelectContent,
+	SelectGroup,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
@@ -30,6 +31,7 @@ export function Toolbar() {
 	return (
 		<div className="flex flex-wrap items-center gap-2">
 			<Select
+				items={FILTER_OPTIONS}
 				value={search.filterBy ?? "all"}
 				onValueChange={(value) =>
 					navigate({
@@ -48,12 +50,14 @@ export function Toolbar() {
 					<SelectValue placeholder="All statuses" />
 				</SelectTrigger>
 				<SelectContent>
-					<SelectItem value="all">All statuses</SelectItem>
-					{FILTER_OPTIONS.map((opt) => (
-						<SelectItem key={opt.value} value={opt.value}>
-							{opt.label}
-						</SelectItem>
-					))}
+					<SelectGroup>
+						<SelectItem value="all">All statuses</SelectItem>
+						{FILTER_OPTIONS.map((opt) => (
+							<SelectItem key={opt.value} value={opt.value}>
+								{opt.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
 				</SelectContent>
 			</Select>
 
@@ -74,6 +78,7 @@ export function Toolbar() {
 
 			<div className="ml-auto flex items-center gap-2">
 				<Select
+					items={SORT_OPTIONS}
 					value={search.sortBy}
 					onValueChange={(value) =>
 						navigate({
@@ -89,11 +94,13 @@ export function Toolbar() {
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
-						{SORT_OPTIONS.map((opt) => (
-							<SelectItem key={opt.value} value={opt.value}>
-								{opt.label}
-							</SelectItem>
-						))}
+						<SelectGroup>
+							{SORT_OPTIONS.map((opt) => (
+								<SelectItem key={opt.value} value={opt.value}>
+									{opt.label}
+								</SelectItem>
+							))}
+						</SelectGroup>
 					</SelectContent>
 				</Select>
 
