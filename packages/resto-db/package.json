@@ -1,0 +1,17 @@
+{
+  "name": "resto-db",
+  "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate --name",
+    "db:generate:custom": "drizzle-kit generate --custom --name",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "drizzle-kit": "^0.31.8",
+    "drizzle-orm": "^0.45.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "dotenv": "^16.0.0"
+  }
+}
