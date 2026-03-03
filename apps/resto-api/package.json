@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@orpc/server": "^1.13.4",
 		"dotenv": "^16.0.0",
+		"drizzle-orm": "^0.45.0",
 		"resto-db": "workspace:*",
 		"valibot": "^1.2.0"
 	},
