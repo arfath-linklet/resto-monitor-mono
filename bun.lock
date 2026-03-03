@@ -11,12 +11,24 @@
     },
     "apps/resto-api": {
       "name": "resto-api",
+      "dependencies": {
+        "resto-db": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
     },
     "apps/resto-front": {
       "name": "resto-front",
     },
     "apps/resto-scrape-worker": {
       "name": "resto-scrape-worker",
+      "dependencies": {
+        "resto-db": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
     },
     "packages/resto-db": {
       "name": "resto-db",

@@ -1,1 +1,3 @@
-console.log("hello world");
+import { migrate } from "resto-db/migrate";
+
+console.log(migrate);

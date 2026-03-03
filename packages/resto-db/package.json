@@ -6,6 +6,9 @@
     "db:generate:custom": "drizzle-kit generate --custom --name",
     "db:studio": "drizzle-kit studio"
   },
+  "exports": {
+    "./migrate": "./src/migrate.ts"
+  },
   "dependencies": {
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.0"
