@@ -1,5 +1,14 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { AlertTriangleIcon, ExternalLinkIcon } from "lucide-react";
+import {
+	AlertTriangleIcon,
+	CalendarPlusIcon,
+	ClockIcon,
+	ExternalLinkIcon,
+	ShieldCheckIcon,
+	SignalIcon,
+	StoreIcon,
+	TimerIcon,
+} from "lucide-react";
 import type { AppRouter, InferRouterOutputs } from "resto-api";
 import { Badge } from "@/components/ui/badge";
 
@@ -10,7 +19,11 @@ export type RestaurantRow =
 export const columns: ColumnDef<RestaurantRow>[] = [
 	{
 		accessorKey: "name",
-		header: "Name",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<StoreIcon className="size-3.5" /> Name
+			</span>
+		),
 		cell: ({ row }) => {
 			const resUrl = `https://www.zomato.com${row.original.resUrl}`;
 			return (
@@ -35,7 +48,11 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 	},
 	{
 		accessorKey: "isOpenNow",
-		header: "Status",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<SignalIcon className="size-3.5" /> Status
+			</span>
+		),
 		cell: ({ row }) => {
 			if (row.original.isPermClosed) {
 				return <Badge variant="destructive">Perm. Closed</Badge>;
@@ -52,7 +69,11 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 	},
 	{
 		accessorKey: "expectedOpen",
-		header: "Expected",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<ShieldCheckIcon className="size-3.5" /> Expected
+			</span>
+		),
 		cell: ({ row }) => {
 			const expected = row.original.expectedOpen;
 			const actual = row.original.isOpenNow;
@@ -75,7 +96,11 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 	},
 	{
 		accessorKey: "nextRunTime",
-		header: "Next Scrape",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<TimerIcon className="size-3.5" /> Next Scrape
+			</span>
+		),
 		cell: ({ getValue }) => {
 			const date = new Date(getValue<string>());
 			const now = new Date();
@@ -97,7 +122,11 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 	},
 	{
 		accessorKey: "updatedAt",
-		header: "Last Updated",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<ClockIcon className="size-3.5" /> Last Updated
+			</span>
+		),
 		cell: ({ getValue }) => {
 			const date = new Date(getValue<string>());
 			return (
@@ -113,7 +142,11 @@ export const columns: ColumnDef<RestaurantRow>[] = [
 	},
 	{
 		accessorKey: "createdAt",
-		header: "Added",
+		header: () => (
+			<span className="inline-flex items-center gap-1.5">
+				<CalendarPlusIcon className="size-3.5" /> Added
+			</span>
+		),
 		cell: ({ getValue }) => {
 			const date = new Date(getValue<string>());
 			return (

@@ -1,7 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense, useDeferredValue } from "react";
+import { RefreshCwIcon, UtensilsIcon } from "lucide-react";
+import { Suspense, useDeferredValue, useTransition } from "react";
 import * as v from "valibot";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
 import { orpc } from "@/orpc";
 import { DataTable } from "./-index/data-table";
 import { TablePagination } from "./-index/pagination";
@@ -75,11 +78,17 @@ function RouteComponent() {
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="space-y-6">
-				<div className="space-y-1">
-					<h1 className="text-2xl font-bold tracking-tight">Restaurants</h1>
-					<p className="text-muted-foreground text-sm">
-						Monitor availability of your tracked restaurants.
-					</p>
+				<div className="flex items-start justify-between">
+					<div className="space-y-1">
+						<h1 className="text-2xl font-bold tracking-tight inline-flex items-center gap-2">
+							<UtensilsIcon className="size-5" />
+							Restaurants
+						</h1>
+						<p className="text-muted-foreground text-sm">
+							Monitor availability of your tracked restaurants.
+						</p>
+					</div>
+					<ModeToggle />
 				</div>
 
 				<Suspense fallback={<RestaurantTableSkeleton />}>
@@ -93,22 +102,42 @@ function RouteComponent() {
 function RestaurantAvailabilityList() {
 	const _query = Route.useSearch();
 	const query = useDeferredValue(_query);
+	const queryClient = useQueryClient();
+	const [isRefreshing, startTransition] = useTransition();
 
-	const { data } = useSuspenseQuery(
-		orpc.restaurantAvailabilities.list.queryOptions({
-			input: {
-				limit: query.limit,
-				offset: query.offset,
-				sortBy: query.sortBy,
-				sortOrder: query.sortOrder,
-				filterBy: toApiFilterBy(query.filterBy),
-			},
-		}),
-	);
+	const queryOptions = orpc.restaurantAvailabilities.list.queryOptions({
+		input: {
+			limit: query.limit,
+			offset: query.offset,
+			sortBy: query.sortBy,
+			sortOrder: query.sortOrder,
+			filterBy: toApiFilterBy(query.filterBy),
+		},
+	});
+
+	const { data } = useSuspenseQuery(queryOptions);
+
+	const handleRefresh = () => {
+		startTransition(async () => {
+			await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
+		});
+	};
 
 	return (
 		<div className="space-y-4">
-			<Toolbar />
+			<Toolbar
+				refreshButton={
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={handleRefresh}
+						disabled={isRefreshing}
+					>
+						<RefreshCwIcon className={isRefreshing ? "animate-spin" : ""} />
+						Refresh
+					</Button>
+				}
+			/>
 			<DataTable data={data} />
 			<TablePagination count={data.length} />
 		</div>

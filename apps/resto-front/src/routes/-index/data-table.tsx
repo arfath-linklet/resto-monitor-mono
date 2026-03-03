@@ -28,6 +28,7 @@ export function DataTable({ data }: DataTableProps) {
 	});
 
 	return (
+		<div className="rounded-lg border">
 		<Table>
 			<TableHeader>
 				{table.getHeaderGroups().map((headerGroup) => (
@@ -66,5 +67,6 @@ export function DataTable({ data }: DataTableProps) {
 				)}
 			</TableBody>
 		</Table>
+		</div>
 	);
 }

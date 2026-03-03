@@ -11,6 +11,7 @@ import {
 	QueryClient,
 	QueryClientProvider,
 } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/theme-provider";
 import { orpc } from "@/orpc.ts";
 
 const queryClient = new QueryClient({
@@ -41,7 +42,11 @@ const router = createRouter({
 	},
 	Wrap: function WrapComponent({ children }) {
 		return (
-			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+			<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+				<QueryClientProvider client={queryClient}>
+					{children}
+				</QueryClientProvider>
+			</ThemeProvider>
 		);
 	},
 });

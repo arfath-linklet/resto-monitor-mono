@@ -1,5 +1,12 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
+import {
+	ArrowDownIcon,
+	ArrowUpIcon,
+	ArrowUpDownIcon,
+	FilterIcon,
+	XIcon,
+} from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Select,
@@ -24,7 +31,7 @@ const FILTER_OPTIONS = [
 	{ value: "isTempClosed", label: "Temp. Closed" },
 ] as const;
 
-export function Toolbar() {
+export function Toolbar({ refreshButton }: { refreshButton?: ReactNode }) {
 	const search = useSearch({ from: "/" });
 	const navigate = useNavigate({ from: "/" });
 
@@ -47,6 +54,7 @@ export function Toolbar() {
 				}
 			>
 				<SelectTrigger size="sm">
+					<FilterIcon className="size-3.5 text-muted-foreground" />
 					<SelectValue placeholder="All statuses" />
 				</SelectTrigger>
 				<SelectContent>
@@ -91,6 +99,7 @@ export function Toolbar() {
 					}
 				>
 					<SelectTrigger size="sm">
+						<ArrowUpDownIcon className="size-3.5 text-muted-foreground" />
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
@@ -120,6 +129,8 @@ export function Toolbar() {
 					{search.sortOrder === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}
 					{search.sortOrder === "asc" ? "Asc" : "Desc"}
 				</Button>
+
+				{refreshButton}
 			</div>
 		</div>
 	);
