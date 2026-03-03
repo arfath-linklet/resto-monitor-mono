@@ -15,6 +15,13 @@
       "when": 1772530014853,
       "tag": "20260303092654_create_restaurant_availabilities__restaurant_timings",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772530300033,
+      "tag": "20260303093140_add_res_url_field",
+      "breakpoints": true
     }
   ]
 }

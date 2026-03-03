@@ -18,6 +18,7 @@ export const restaurantAvailabilities = appPgSchema.table(
 		id: uuid("id").primaryKey().defaultRandom(),
 
 		res_id: text("res_id").notNull().unique(),
+		res_url: text("res_url").notNull().unique(),
 		res_status_text: text("res_status_text"),
 		name: text("name").notNull(),
 		isOpenNow: boolean("is_open_now").notNull(),
