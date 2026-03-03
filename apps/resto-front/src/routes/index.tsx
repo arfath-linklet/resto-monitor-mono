@@ -3,6 +3,21 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, useDeferredValue } from "react";
 import * as v from "valibot";
 import { orpc } from "@/orpc";
+import { DataTable } from "./-index/data-table";
+import { TablePagination } from "./-index/pagination";
+import { RestaurantTableSkeleton } from "./-index/skeleton";
+import { Toolbar } from "./-index/toolbar";
+
+type FilterBy = "isOpenNow" | "isPermClosed" | "isTempClosed";
+
+function toApiFilterBy(filterBy: FilterBy | undefined) {
+	if (!filterBy) return undefined;
+	return {
+		isOpenNow: filterBy === "isOpenNow" ? true : undefined,
+		isPermClosed: filterBy === "isPermClosed" ? true : undefined,
+		isTempClosed: filterBy === "isTempClosed" ? true : undefined,
+	};
+}
 
 const querySchema = v.object({
 	offset: v.optional(v.fallback(v.number(), 0), 0),
@@ -25,13 +40,7 @@ const querySchema = v.object({
 		"desc",
 	),
 	filterBy: v.optional(
-		v.picklist([
-			"createdAt",
-			"updatedAt",
-			"isOpenNow",
-			"isPermClosed",
-			"isTempClosed",
-		]),
+		v.picklist(["isOpenNow", "isPermClosed", "isTempClosed"]),
 	),
 });
 
@@ -52,7 +61,7 @@ export const Route = createFileRoute("/")({
 					limit: query.limit,
 					sortBy: query.sortBy,
 					sortOrder: query.sortOrder,
-					filterBy: query.filterBy,
+					filterBy: toApiFilterBy(query.filterBy),
 				},
 			}),
 		);
@@ -62,44 +71,44 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	return (
-		<Suspense fallback={<RestaurantAvailabilityListSkeleton />}>
-			<RestaurantAvailabilityList />
-		</Suspense>
-	);
-}
+		<div className="container mx-auto px-4 py-8">
+			<div className="space-y-6">
+				<div className="space-y-1">
+					<h1 className="text-2xl font-bold tracking-tight">Restaurants</h1>
+					<p className="text-muted-foreground text-sm">
+						Monitor availability of your tracked restaurants.
+					</p>
+				</div>
 
-function RestaurantAvailabilityListSkeleton() {
-	return null;
+				<Suspense fallback={<RestaurantTableSkeleton />}>
+					<RestaurantAvailabilityList />
+				</Suspense>
+			</div>
+		</div>
+	);
 }
 
 function RestaurantAvailabilityList() {
 	const _query = Route.useSearch();
 	const query = useDeferredValue(_query);
 
-	const { data } = useSuspenseQuery({
-		...orpc.restaurantAvailabilities.list.queryOptions({
+	const { data } = useSuspenseQuery(
+		orpc.restaurantAvailabilities.list.queryOptions({
 			input: {
 				limit: query.limit,
 				offset: query.offset,
 				sortBy: query.sortBy,
 				sortOrder: query.sortOrder,
-				filterBy: query.filterBy,
+				filterBy: toApiFilterBy(query.filterBy),
 			},
 		}),
-	});
+	);
 
 	return (
-		<div className="w-full space-y-4">
-			<div className="flex flex-wrap justify-between gap-4">
-				<div className="space-y-1">
-					<h1 className="text-2xl font-bold tracking-tight">Restaurants</h1>
-					<p className="text-muted-foreground text-sm">
-						List of your restaurants
-					</p>
-				</div>
-			</div>
-
-			{/*todo*/}
+		<div className="space-y-4">
+			<Toolbar />
+			<DataTable data={data} />
+			<TablePagination count={data.length} />
 		</div>
 	);
 }
