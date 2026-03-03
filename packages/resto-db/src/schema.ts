@@ -2,6 +2,7 @@ import type { InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	integer,
 	pgSchema,
 	text,
 	time,
@@ -52,7 +53,7 @@ export const restaurantTimings = appPgSchema.table("restaurant_timings", {
 	resId: text("res_id")
 		.notNull()
 		.references(() => restaurantAvailabilities.resId),
-	dayOfWeek: text("day_of_week").notNull(),
+	dayOfWeek: integer("day_of_week").notNull(),
 	opensAt: time("opens_at").notNull(),
 	closesAt: time("closes_at").notNull(),
 
