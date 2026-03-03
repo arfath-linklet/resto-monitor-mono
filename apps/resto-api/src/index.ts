@@ -7,6 +7,7 @@ import {
 import { db as dbFactory } from "resto-db/db";
 import { migrate } from "resto-db/migrate";
 import { env } from "@/env";
+import { restaurantAvailabilitiesRouter } from "@/routers/restaurant-availabilities";
 import { seed } from "@/seed";
 
 const db = dbFactory(env.DATABASE_URL);
@@ -19,7 +20,9 @@ await migrate(db, {
 // seed db
 await seed(db);
 
-const router = {};
+const router = {
+	restaurantAvailabilities: restaurantAvailabilitiesRouter,
+};
 
 const handler = new RPCHandler(router, {
 	plugins: [
