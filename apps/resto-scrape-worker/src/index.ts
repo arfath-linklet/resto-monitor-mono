@@ -152,6 +152,11 @@ console.log(
 	`Scrape worker started — polling every ${POLL_INTERVAL_MS / 1000}s`,
 );
 
+if (env.NODE_ENV === "development") {
+	// sleep for 2 seconds on initial load for migrations to run on bun run dev
+	await Bun.sleep(2_000);
+}
+
 while (true) {
 	try {
 		await poll();
