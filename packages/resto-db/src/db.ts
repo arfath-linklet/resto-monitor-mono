@@ -5,3 +5,5 @@ export const db = (url: string) =>
 	drizzle(url, {
 		schema,
 	});
+
+export type Db = ReturnType<typeof db>;
