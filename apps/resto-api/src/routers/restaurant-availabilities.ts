@@ -9,6 +9,8 @@ const columnMap = {
 	isOpenNow: restaurantAvailabilities.isOpenNow,
 	isPermClosed: restaurantAvailabilities.isPermClosed,
 	isTempClosed: restaurantAvailabilities.isTempClosed,
+	expectedOpen: restaurantAvailabilities.expectedOpen,
+	lastCheckedAt: restaurantAvailabilities.lastCheckedAt,
 };
 
 export const restaurantAvailabilitiesRouter = {
@@ -23,6 +25,8 @@ export const restaurantAvailabilitiesRouter = {
 					"isOpenNow",
 					"isPermClosed",
 					"isTempClosed",
+					"expectedOpen",
+					"lastCheckedAt",
 				]),
 				sortOrder: v.picklist(["asc", "desc"]),
 				filterBy: v.optional(
@@ -30,6 +34,7 @@ export const restaurantAvailabilitiesRouter = {
 						isOpenNow: v.optional(v.boolean()),
 						isPermClosed: v.optional(v.boolean()),
 						isTempClosed: v.optional(v.boolean()),
+						expectedOpen: v.optional(v.boolean()),
 					}),
 				),
 			}),
@@ -53,6 +58,11 @@ export const restaurantAvailabilitiesRouter = {
 			if (filterBy?.isTempClosed !== undefined) {
 				conditions.push(
 					eq(restaurantAvailabilities.isTempClosed, filterBy.isTempClosed),
+				);
+			}
+			if (filterBy?.expectedOpen !== undefined) {
+				conditions.push(
+					eq(restaurantAvailabilities.expectedOpen, filterBy.expectedOpen),
 				);
 			}
 

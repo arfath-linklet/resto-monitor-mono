@@ -8,6 +8,13 @@
       "when": 1772532468076,
       "tag": "20260303100748_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772541139048,
+      "tag": "20260303123219_add-expected-availability-fields",
+      "breakpoints": true
     }
   ]
 }

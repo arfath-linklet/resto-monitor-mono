@@ -1,0 +1,198 @@
+{
+  "id": "8ffd48a5-49b4-4dba-a26a-431a5c3f8e47",
+  "prevId": "0c90c00f-e554-4045-a85b-f598d8a071ae",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "app.restaurant_availabilities": {
+      "name": "restaurant_availabilities",
+      "schema": "app",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "res_id": {
+          "name": "res_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_url": {
+          "name": "res_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_status_text": {
+          "name": "res_status_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_open_now": {
+          "name": "is_open_now",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_perm_closed": {
+          "name": "is_perm_closed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_temp_closed": {
+          "name": "is_temp_closed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_open": {
+          "name": "expected_open",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "last_checked_at": {
+          "name": "last_checked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "restaurant_availabilities_res_id_unique": {
+          "name": "restaurant_availabilities_res_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "res_id"
+          ]
+        },
+        "restaurant_availabilities_res_url_unique": {
+          "name": "restaurant_availabilities_res_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "res_url"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "app.restaurant_timings": {
+      "name": "restaurant_timings",
+      "schema": "app",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "res_id": {
+          "name": "res_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day_of_week": {
+          "name": "day_of_week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "opens_at": {
+          "name": "opens_at",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "closes_at": {
+          "name": "closes_at",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "restaurant_timings_res_id_restaurant_availabilities_res_id_fk": {
+          "name": "restaurant_timings_res_id_restaurant_availabilities_res_id_fk",
+          "tableFrom": "restaurant_timings",
+          "tableTo": "restaurant_availabilities",
+          "schemaTo": "app",
+          "columnsFrom": [
+            "res_id"
+          ],
+          "columnsTo": [
+            "res_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "app": "app"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
