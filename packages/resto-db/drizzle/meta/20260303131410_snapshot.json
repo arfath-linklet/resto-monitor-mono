@@ -1,6 +1,6 @@
 {
-  "id": "8ffd48a5-49b4-4dba-a26a-431a5c3f8e47",
-  "prevId": "0c90c00f-e554-4045-a85b-f598d8a071ae",
+  "id": "e1224feb-124a-457f-acfa-bf0da5c9de9f",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -64,11 +64,19 @@
           "notNull": true,
           "default": false
         },
-        "last_checked_at": {
-          "name": "last_checked_at",
+        "scrape_status": {
+          "name": "scrape_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'SCHEDULED'"
+        },
+        "next_run_time": {
+          "name": "next_run_time",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "created_at": {
           "name": "created_at",

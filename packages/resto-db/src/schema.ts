@@ -26,7 +26,8 @@ export const restaurantAvailabilities = appPgSchema.table(
 		isPermClosed: boolean("is_perm_closed").notNull(),
 		isTempClosed: boolean("is_temp_closed").notNull(),
 		expectedOpen: boolean("expected_open").notNull().default(false),
-		lastCheckedAt: timestamp("last_checked_at"),
+		scrapeStatus: text("scrape_status").notNull().default("SCHEDULED"),
+		nextRunTime: timestamp("next_run_time").defaultNow().notNull(),
 
 		// Timestamps
 		createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -1,2 +1,0 @@
-ALTER TABLE "app"."restaurant_availabilities" ADD COLUMN "expected_open" boolean DEFAULT false NOT NULL;--> statement-breakpoint
-ALTER TABLE "app"."restaurant_availabilities" ADD COLUMN "last_checked_at" timestamp;
