@@ -17,9 +17,9 @@ export const restaurantAvailabilities = appPgSchema.table(
 		// Identity
 		id: uuid("id").primaryKey().defaultRandom(),
 
-		res_id: text("res_id").notNull().unique(),
-		res_url: text("res_url").notNull().unique(),
-		res_status_text: text("res_status_text"),
+		resId: text("res_id").notNull().unique(),
+		resUrl: text("res_url").notNull().unique(),
+		resStatusText: text("res_status_text"),
 		name: text("name").notNull(),
 		isOpenNow: boolean("is_open_now").notNull(),
 		isPermClosed: boolean("is_perm_closed").notNull(),
@@ -49,12 +49,12 @@ export const restaurantTimings = appPgSchema.table("restaurant_timings", {
 	// Identity
 	id: uuid("id").primaryKey().defaultRandom(),
 
-	res_id: text("res_id")
+	resId: text("res_id")
 		.notNull()
-		.references(() => restaurantAvailabilities.res_id),
-	day_of_week: text("day_of_week").notNull(),
-	opens_at: time("opens_at").notNull(),
-	closes_at: time("closes_at").notNull(),
+		.references(() => restaurantAvailabilities.resId),
+	dayOfWeek: text("day_of_week").notNull(),
+	opensAt: time("opens_at").notNull(),
+	closesAt: time("closes_at").notNull(),
 
 	// Timestamps
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -68,8 +68,8 @@ export const restaurantTimingsRelations = relations(
 	restaurantTimings,
 	({ one }) => ({
 		restaurant: one(restaurantAvailabilities, {
-			fields: [restaurantTimings.res_id],
-			references: [restaurantAvailabilities.res_id],
+			fields: [restaurantTimings.resId],
+			references: [restaurantAvailabilities.resId],
 		}),
 	}),
 );
