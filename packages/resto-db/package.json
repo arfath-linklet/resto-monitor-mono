@@ -7,7 +7,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "exports": {
-    "./migrate": "./src/migrate.ts"
+    "./migrate": "./src/migrate.ts",
+    "./schema": "./src/schema.ts"
   },
   "dependencies": {
     "drizzle-kit": "^0.31.8",
